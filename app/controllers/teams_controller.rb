@@ -23,6 +23,37 @@ class TeamsController < ApplicationController
         end
     end
 
+    def invite
+        begin
+            team = Team.find(params[:id])
+            user = User.new(user_params)
+            user.team = team
+
+            respond_to do |format|
+                if user.valid?
+                    user.save
+
+                    format.json {
+                        render json: { :team => team, :user => user },
+                        :status => :created
+                    }
+                else
+                    format.json {
+                        render json: { :team => team.errors, :user => user.errors },
+                        :status => :unprocessable_entity
+                    }
+                end
+            end
+        rescue
+            respond_to do |format|
+                format.json {
+                    render json: {},
+                    :status => :not_found
+                }
+            end
+        end
+    end
+
     private
         def team_params
             params.require(:team).permit(:name)
