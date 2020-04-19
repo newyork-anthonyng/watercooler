@@ -1,3 +1,12 @@
+# Testing
+```
+# run all tests
+rails test
+
+# run test for specific file
+rails test PATH/TO/SPECIFIC_FILE
+```
+
 # README
 
 This README would normally document whatever steps are necessary to get the
