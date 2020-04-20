@@ -5,21 +5,15 @@ class TeamsController < ApplicationController
         user.is_admin = true
         user.team = team
 
-        respond_to do |format|
-            if team.valid? and user.valid?
-                team.save
-                user.save
+        if team.valid? and user.valid?
+            team.save
+            user.save
 
-                format.json {
-                    render json: { :team => team, :user => user },
-                    :status => :created
-                }
-            else
-                format.json {
-                    render json: { :team => team.errors, :user => user.errors },
-                    :status => :unprocessable_entity
-                }
-            end
+            render json: { :team => team, :user => user },
+            :status => :created
+        else
+            render json: { :team => team.errors, :user => user.errors },
+                :status => :unprocessable_entity
         end
     end
 
@@ -29,28 +23,17 @@ class TeamsController < ApplicationController
             user = User.new(user_params)
             user.team = team
 
-            respond_to do |format|
-                if user.valid?
-                    user.save
+            if user.valid?
+                user.save
 
-                    format.json {
-                        render json: { :team => team, :user => user },
-                        :status => :created
-                    }
-                else
-                    format.json {
-                        render json: { :team => team.errors, :user => user.errors },
-                        :status => :unprocessable_entity
-                    }
-                end
+                render json: { :team => team, :user => user },
+                    :status => :created
+            else
+                render json: { :team => team.errors, :user => user.errors },
+                    :status => :unprocessable_entity
             end
         rescue
-            respond_to do |format|
-                format.json {
-                    render json: {},
-                    :status => :not_found
-                }
-            end
+            render json: {}, :status => :not_found
         end
     end
 
