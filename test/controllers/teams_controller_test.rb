@@ -128,4 +128,22 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     assert_equal(false, new_user.present?)
     assert_response :unprocessable_entity
   end
+
+  test "should return error if invitee is not an admin" do
+    @user.update(:is_admin => false)
+
+    login_as @user.email, @user.password
+    post "/teams/#{@team.id}/invite", as: :json, params: {
+        user: {
+            first_name: "Jane",
+            last_name: "Doe",
+            email: "janedoe@example.com",
+            password: "a1b2c3"
+        }
+    }
+
+    new_user = User.where(:email => "janedoe@example.com").first
+    assert_equal(false, new_user.present?)
+    assert_response :unauthorized
+  end
 end

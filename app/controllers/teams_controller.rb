@@ -22,7 +22,7 @@ class TeamsController < ApplicationController
     def invite
         begin
             team = Team.find(params[:id])
-            if current_user.team != team
+            if current_user.team != team or !authorized_user
                 return render json: {}, :status => :unauthorized
             end
 
