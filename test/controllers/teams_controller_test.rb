@@ -63,7 +63,6 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     login_as @user.email, @user.password
 
     post "/teams/#{@team.id}/invite", as: :json, params: {
-        team: { name: "Watercooler" },
         user: {
             first_name: "Jane",
             last_name: "Doe",
@@ -82,7 +81,6 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     non_existent_team = 123456
 
     post "/teams/#{non_existent_team}/invite", as: :json, params: {
-        team: { name: "Watercooler" },
         user: {
             first_name: "Jane",
             last_name: "Doe",
@@ -96,6 +94,24 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "should return error if invitation is for different team" do
+    login_as @user.email, @user.password
+    another_team = Team.create(name: "Another team")
+
+    post "/teams/#{another_team.id}/invite", as: :json, params: {
+        user: {
+            first_name: "Jane",
+            last_name: "Doe",
+            email: "janedoe@example.com",
+            password: "a1b2c3"
+        }
+    }
+
+    new_user = User.where(:email => "janedoe@example.com").first
+    assert_equal(false, new_user.present?)
+    assert_response :unauthorized
+  end
+
   test "should return error if user is invalid" do
     login_as @user.email, @user.password
 
@@ -105,7 +121,6 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
         password: "a1b2c3"
     }
     post "/teams/#{@team.id}/invite", as: :json, params: {
-        team: { name: "Watercooler" },
         user: invalid_user
     }
 
