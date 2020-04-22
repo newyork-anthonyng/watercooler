@@ -2,6 +2,10 @@ class ApplicationController < ActionController::Base
     skip_forgery_protection
     before_action :require_login
 
+    def authorized_user
+        current_user && current_user.is_admin
+    end
+
     def require_login
         if current_user.nil?
             render json: {}, :status => :unauthorized
