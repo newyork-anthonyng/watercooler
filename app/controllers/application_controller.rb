@@ -3,9 +3,7 @@ class ApplicationController < ActionController::Base
     before_action :require_login
 
     def authorized_user
-        return false if current_user.nil?
-
-        current_user.is_admin
+        current_user && current_user.is_admin
     end
 
     def require_login
