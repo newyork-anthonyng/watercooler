@@ -1,4 +1,6 @@
 class TeamsController < ApplicationController
+    skip_before_action :require_login, only: [:create]
+
     def create
         team = Team.new(team_params)
         user = User.new(user_params)
