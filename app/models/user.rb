@@ -6,4 +6,6 @@ class User < ApplicationRecord
     validates :email, presence: true, uniqueness: true
 
     belongs_to :team
+
+    has_many :daily_check_ins, dependent: :destroy
 end
