@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_19_182451) do
+ActiveRecord::Schema.define(version: 2020_04_22_225334) do
+
+  create_table "daily_check_ins", force: :cascade do |t|
+    t.text "doing_today"
+    t.text "done_yesterday"
+    t.text "mood"
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_daily_check_ins_on_user_id"
+  end
 
   create_table "teams", force: :cascade do |t|
     t.string "name"
