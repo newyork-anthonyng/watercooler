@@ -21,7 +21,6 @@ class TeamsController < ApplicationController
 
     def invite
         begin
-            team = Team.find(params[:id])
             emails = params[:emails]
             errors = []
             emails.each do |email|
@@ -34,7 +33,7 @@ class TeamsController < ApplicationController
                         first_name: "Nathaneal",
                         last_name: "Down",
                         phone_number: "555-555-5555",
-                        team: team,
+                        team: current_user.team,
                         password: "password123"
                     )
                 end

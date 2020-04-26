@@ -79,7 +79,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
   test "should create dummy users when inviting members to team" do
     login_as @user.email, @user.password
 
-    post "/teams/#{@team.id}/invite", as: :json, params: {
+    post "/teams/invite", as: :json, params: {
       emails: ["a@gmail.com", "b@gmail.com"]
     }
 
@@ -95,7 +95,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
   test "should return errors if email already exists" do
     login_as @user.email, @user.password
 
-    post "/teams/#{@team.id}/invite", as: :json, params: {
+    post "/teams/invite", as: :json, params: {
       emails: [@user.email]
     }
 
@@ -104,7 +104,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should return error if not logged in" do
-    post "/teams/#{@team.id}/invite", as: :json, params: {
+    post "/teams/invite", as: :json, params: {
       emails: ["a@gmail.com", "b@gmail.com"]
     }
 
