@@ -61,6 +61,21 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "should return error if team with name already exists" do
+    post teams_url, as: :json, params: {
+        team: { name: "Watercooler" },
+        user: {
+            first_name: "Jane",
+            last_name: "Doe",
+            email: "janedoe@example.com",
+            phone_number: "555-555-5555",
+            password: "a1b2c3"
+        }
+    }
+
+    assert_response :unprocessable_entity
+  end
+
   test "should add new user to team" do
     login_as @user.email, @user.password
 
