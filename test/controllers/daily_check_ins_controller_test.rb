@@ -7,6 +7,7 @@ class DailyCheckInControllerTest < ActionDispatch::IntegrationTest
       :first_name => "John",
       :last_name => "Doe",
       :email => "johndoe@example.com",
+      :phone_number => "555-555-5555",
       :password => "a1b2c3",
       :team => @team,
       :is_admin => true

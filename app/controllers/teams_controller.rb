@@ -53,6 +53,7 @@ class TeamsController < ApplicationController
                 :first_name,
                 :last_name,
                 :email,
+                :phone_number,
                 :password, 
                 :password_confirmation
             )
