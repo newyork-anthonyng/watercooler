@@ -76,10 +76,49 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "should create dummy users when inviting members to team" do
+    login_as @user.email, @user.password
+
+    post "/teams/invite", as: :json, params: {
+      emails: ["a@gmail.com", "b@gmail.com"]
+    }
+
+    first_user = User.where(:email => "a@gmail.com").first
+    second_user = User.where(:email => "b@gmail.com").first
+    assert_equal(true, first_user.present?)
+    assert_equal(true, first_user.invited?)
+    assert_equal(true, second_user.present?)
+    assert_equal(true, second_user.invited?)
+    assert_response :created
+  end
+
+  test "should return errors if email already exists" do
+    login_as @user.email, @user.password
+
+    post "/teams/invite", as: :json, params: {
+      emails: [@user.email]
+    }
+
+    assert_response :created
+    assert_equal(["#{@user.email} user already exists."], JSON.parse(response.body)["errors"])
+  end
+
+  test "should return error if not logged in" do
+    post "/teams/invite", as: :json, params: {
+      emails: ["a@gmail.com", "b@gmail.com"]
+    }
+
+    first_user = User.where(:email => "a@gmail.com").first
+    second_user = User.where(:email => "b@gmail.com").first
+    assert_equal(false, first_user.present?)
+    assert_equal(false, second_user.present?)
+    assert_response :unauthorized
+  end
+
   test "should add new user to team" do
     login_as @user.email, @user.password
 
-    post "/teams/#{@team.id}/invite", as: :json, params: {
+    post "/teams/#{@team.id}/applesauce", as: :json, params: {
         user: {
             first_name: "Jane",
             last_name: "Doe",
@@ -98,7 +137,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     login_as @user.email, @user.password
     non_existent_team = 123456
 
-    post "/teams/#{non_existent_team}/invite", as: :json, params: {
+    post "/teams/#{non_existent_team}/applesauce", as: :json, params: {
         user: {
             first_name: "Jane",
             last_name: "Doe",
@@ -116,7 +155,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     login_as @user.email, @user.password
     another_team = Team.create(name: "Another team")
 
-    post "/teams/#{another_team.id}/invite", as: :json, params: {
+    post "/teams/#{another_team.id}/applesauce", as: :json, params: {
         user: {
             first_name: "Jane",
             last_name: "Doe",
@@ -138,7 +177,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
         email: "janedoe@example.com",
         password: "a1b2c3"
     }
-    post "/teams/#{@team.id}/invite", as: :json, params: {
+    post "/teams/#{@team.id}/applesauce", as: :json, params: {
         user: invalid_user
     }
 
@@ -151,7 +190,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     @user.update(:is_admin => false)
 
     login_as @user.email, @user.password
-    post "/teams/#{@team.id}/invite", as: :json, params: {
+    post "/teams/#{@team.id}/applesauce", as: :json, params: {
         user: {
             first_name: "Jane",
             last_name: "Doe",

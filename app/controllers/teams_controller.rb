@@ -21,6 +21,32 @@ class TeamsController < ApplicationController
 
     def invite
         begin
+            emails = params[:emails]
+            errors = []
+            emails.each do |email|
+                existing_user = User.where(:email => email)
+                if existing_user.present?
+                    errors.push "#{email} user already exists."
+                else
+                    user = User.create(
+                        email: email,
+                        first_name: "Nathaneal",
+                        last_name: "Down",
+                        phone_number: "555-555-5555",
+                        team: current_user.team,
+                        password: "password123"
+                    )
+                end
+            end
+
+            render json: { errors: errors }, :status => :created
+        rescue
+            render json: {}, :status => :unprocessable_entity
+        end
+    end
+
+    def applesauce
+        begin
             team = Team.find(params[:id])
             if current_user.team != team or !authorized_user
                 return render json: {}, :status => :unauthorized
