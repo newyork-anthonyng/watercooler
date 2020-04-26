@@ -8,4 +8,6 @@ class User < ApplicationRecord
     belongs_to :team
 
     has_many :daily_check_ins, dependent: :destroy
+
+    enum invite_status: [:invited, :active]
 end
