@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_22_225334) do
+ActiveRecord::Schema.define(version: 2020_04_26_150630) do
 
   create_table "daily_check_ins", force: :cascade do |t|
     t.text "doing_today"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2020_04_22_225334) do
     t.boolean "is_admin", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "phone_number", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["team_id"], name: "index_users_on_team_id"
   end
