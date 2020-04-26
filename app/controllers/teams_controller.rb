@@ -11,6 +11,8 @@ class TeamsController < ApplicationController
             team.save
             user.save
 
+            UserMailer.with(user: user).team_created_verification_email.deliver_later
+
             render json: { :team => team, :user => user },
             :status => :created
         else
