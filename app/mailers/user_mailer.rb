@@ -3,7 +3,8 @@ class UserMailer < ApplicationMailer
 
     def team_created_verification_email
         @user = params[:user]
-        @url = "http://localhost:8080/verify/#{@user.invitation_hash}"
+        encoded_hash = URI.encode_www_form_component(@user.invitation_hash)
+        @url = "http://localhost:8080/verify/#{encoded_hash}"
         mail(to: @user.email, subject: "Welcome to My Awesome Site")
     end
 end
