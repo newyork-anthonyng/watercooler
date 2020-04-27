@@ -25,7 +25,6 @@ class ApplicationController < ActionController::Base
     end
 
     def encrypt(argument)
-        # byebug
         crypt.encrypt_and_sign(argument)
     end
 

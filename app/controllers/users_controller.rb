@@ -5,7 +5,6 @@ class UsersController < ApplicationController
         invitation_hash = params[:invitation_hash]
         user = User.find_by(:invitation_hash => invitation_hash)
 
-
         if user.present?
             user.update(:invite_status => "active", :invitation_hash => nil)
 
