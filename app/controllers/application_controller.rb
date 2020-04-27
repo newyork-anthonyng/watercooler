@@ -19,4 +19,17 @@ class ApplicationController < ActionController::Base
             @current_user = nil
         end
     end
+
+    def crypt
+        @crypt ||= ActiveSupport::MessageEncryptor.new(ENV["KEY"])
+    end
+
+    def encrypt(argument)
+        # byebug
+        crypt.encrypt_and_sign(argument)
+    end
+
+    def decrypt(argument)
+        crypt.decrypt_and_verify(argument)
+    end
 end

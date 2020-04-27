@@ -8,6 +8,8 @@ class TeamsController < ApplicationController
         user.team = team
 
         if team.valid? and user.valid?
+            user.invitation_hash = encrypt ("#{user.first_name}, #{user.last_name}, #{user.email}")
+
             team.save
             user.save
 
