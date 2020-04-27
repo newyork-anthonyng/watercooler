@@ -42,6 +42,22 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     assert_response :created
   end
 
+  test "should send out mailer" do
+    post teams_url, as: :json, params: {
+        team: { name: "Watercooler1" },
+        user: {
+            first_name: "Jane",
+            last_name: "Doe",
+            email: "janedoe@example.com",
+            phone_number: "555-555-5555",
+            password: "a1b2c3"
+        }
+    }
+
+    new_user = User.where(email: "janedoe@example.com").first
+    assert_enqueued_email_with UserMailer, :team_created_verification_email, args: { user: new_user }
+  end
+
   test "should cleanup team and user if error" do
     invalid_user = {
         last_name: "Doe",
@@ -92,6 +108,20 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     assert_response :created
   end
 
+  test "should send out invite mailer" do
+    login_as @user.email, @user.password
+
+    post "/teams/invite", as: :json, params: {
+      emails: ["a@gmail.com", "b@gmail.com"]
+    }
+
+    first_user = User.where(:email => "a@gmail.com").first
+    second_user = User.where(:email => "b@gmail.com").first
+
+    assert_enqueued_email_with UserMailer, :team_member_invite_email, args: { user: first_user }
+    assert_enqueued_email_with UserMailer, :team_member_invite_email, args: { user: second_user }
+  end
+
   test "should return errors if email already exists" do
     login_as @user.email, @user.password
 
@@ -115,92 +145,4 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test "should add new user to team" do
-    login_as @user.email, @user.password
-
-    post "/teams/#{@team.id}/applesauce", as: :json, params: {
-        user: {
-            first_name: "Jane",
-            last_name: "Doe",
-            email: "janedoe@example.com",
-            phone_number: "555-555-5555",
-            password: "a1b2c3"
-        }
-    }
-
-    new_user = User.where(:email => "janedoe@example.com").first
-    assert_equal(true, new_user.present?)
-    assert_response :created
-  end
-
-  test "should return error if team is not found" do
-    login_as @user.email, @user.password
-    non_existent_team = 123456
-
-    post "/teams/#{non_existent_team}/applesauce", as: :json, params: {
-        user: {
-            first_name: "Jane",
-            last_name: "Doe",
-            email: "janedoe@example.com",
-            password: "a1b2c3"
-        }
-    }
-
-    new_user = User.where(:email => "janedoe@example.com").first
-    assert_equal(false, new_user.present?)
-    assert_response :not_found
-  end
-
-  test "should return error if invitation is for different team" do
-    login_as @user.email, @user.password
-    another_team = Team.create(name: "Another team")
-
-    post "/teams/#{another_team.id}/applesauce", as: :json, params: {
-        user: {
-            first_name: "Jane",
-            last_name: "Doe",
-            email: "janedoe@example.com",
-            password: "a1b2c3"
-        }
-    }
-
-    new_user = User.where(:email => "janedoe@example.com").first
-    assert_equal(false, new_user.present?)
-    assert_response :unauthorized
-  end
-
-  test "should return error if user is invalid" do
-    login_as @user.email, @user.password
-
-    invalid_user = {
-        last_name: "Doe",
-        email: "janedoe@example.com",
-        password: "a1b2c3"
-    }
-    post "/teams/#{@team.id}/applesauce", as: :json, params: {
-        user: invalid_user
-    }
-
-    new_user = User.where(:email => "janedoe@example.com").first
-    assert_equal(false, new_user.present?)
-    assert_response :unprocessable_entity
-  end
-
-  test "should return error if invitee is not an admin" do
-    @user.update(:is_admin => false)
-
-    login_as @user.email, @user.password
-    post "/teams/#{@team.id}/applesauce", as: :json, params: {
-        user: {
-            first_name: "Jane",
-            last_name: "Doe",
-            email: "janedoe@example.com",
-            password: "a1b2c3"
-        }
-    }
-
-    new_user = User.where(:email => "janedoe@example.com").first
-    assert_equal(false, new_user.present?)
-    assert_response :unauthorized
-  end
 end
