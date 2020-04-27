@@ -13,4 +13,13 @@ class UsersController < ApplicationController
             render json: {}, :status => :not_found
         end
     end
+
+    def index
+        return render json: {}, :status => :unauthorized if !authorized_user
+
+        my_team = current_user.team
+        team_users = my_team.users.pluck(:email)
+
+        render json: { users: team_users }, :status => :ok
+    end
 end
