@@ -40,6 +40,10 @@ class TeamsController < ApplicationController
                         team: current_user.team,
                         password: "password123"
                     )
+
+                    if user.persisted?
+                        UserMailer.with(user: user).team_member_invite_email.deliver_later
+                    end
                 end
             end
 
