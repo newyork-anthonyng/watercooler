@@ -1,5 +1,5 @@
 class TeamsController < ApplicationController
-    skip_before_action :require_login, only: [:create]
+    skip_before_action :require_login, only: [:create, :additionalInformation]
 
     def create
         team = Team.new(team_params)
@@ -32,13 +32,15 @@ class TeamsController < ApplicationController
                 if existing_user.present?
                     errors.push "#{email} user already exists."
                 else
+                    invitation_hash = encrypt ("Nathaneal, Down, #{email}")
                     user = User.create(
                         email: email,
                         first_name: "Nathaneal",
                         last_name: "Down",
                         phone_number: "555-555-5555",
                         team: current_user.team,
-                        password: "password123"
+                        password: "password123",
+                        invitation_hash: invitation_hash
                     )
 
                     if user.persisted?
@@ -50,30 +52,6 @@ class TeamsController < ApplicationController
             render json: { errors: errors }, :status => :created
         rescue
             render json: {}, :status => :unprocessable_entity
-        end
-    end
-
-    def applesauce
-        begin
-            team = Team.find(params[:id])
-            if current_user.team != team or !authorized_user
-                return render json: {}, :status => :unauthorized
-            end
-
-            user = User.new(user_params)
-            user.team = team
-
-            if user.valid?
-                user.save
-
-                render json: { :team => team, :user => user },
-                    :status => :created
-            else
-                render json: { :team => team.errors, :user => user.errors },
-                    :status => :unprocessable_entity
-            end
-        rescue
-            render json: {}, :status => :not_found
         end
     end
 

@@ -4,9 +4,10 @@ Rails.application.routes.draw do
 
   get '/users', to: 'users#index'
   post '/verify/:invitation_hash', to: 'users#verify'
+  post '/verify-additional-information', to: 'users#additionalInformation'
 
   post '/teams/invite', to: 'teams#invite'
-  post '/teams/:id/applesauce', to: 'teams#applesauce'
+  
   post '/daily-check-in', to: 'daily_check_ins#check_in', as: 'daily_check_in'
 
   post 'login', to: 'sessions#create', as: 'login'
