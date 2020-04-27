@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :teams, only: [:create]
   post '/teams/invite', to: 'teams#invite'
   post '/teams/:id/applesauce', to: 'teams#applesauce'
-
+  post '/verify/:invitation_hash', to: 'users#verify'
   post '/daily-check-in', to: 'daily_check_ins#check_in', as: 'daily_check_in'
 
   post 'login', to: 'sessions#create', as: 'login'
