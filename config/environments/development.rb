@@ -61,4 +61,10 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.session_store :cookie_store, key: 'coole', domain: 'localhost'
+
+  config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.perform_deliveries = true
+
+  ENV["KEY"] = "4\x16\xEC\xE0}\xB0B\xC7\xA4\x7F\x98\x0Eg\xBC\\*\xF1\xA4M3\xEA\xC2zSf\xE8Z\x8A\x04j\xA0\x19"
+  ENV["SALT"] = "x\xE6d\xE3jP\xB1\x9FWL+e&c\x0F\a\x14D\xC0C{f\xA6\x9E\xB7\xF2\x9A\xCBo\xAD4E"
 end

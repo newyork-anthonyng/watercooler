@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_26_163937) do
+ActiveRecord::Schema.define(version: 2020_04_26_231905) do
 
   create_table "daily_check_ins", force: :cascade do |t|
     t.text "doing_today"
@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 2020_04_26_163937) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "phone_number", null: false
     t.integer "invite_status", default: 0
+    t.string "invitation_hash"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["team_id"], name: "index_users_on_team_id"
   end
